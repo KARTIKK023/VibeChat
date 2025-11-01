@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../store/useAuthStore";
 import AuthImagePattern from "../components/AuthImagePattern";
-import { Link } from "react-router-dom";
+import GoogleLoginButton from "../components/GoogleLoginButton"; 
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare } from "lucide-react";
+import toast from "react-hot-toast"; 
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -11,14 +13,44 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
-  const { login, isLoggingIn } = useAuthStore();
+  const { login, isLoggingIn, authUser } = useAuthStore();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  
+  useEffect(() => {
+    if (authUser) {
+      navigate("/", { replace: true });
+    }
+  }, [authUser, navigate]);
+
+  
+  useEffect(() => {
+    const error = searchParams.get("error");
+    const auth = searchParams.get("auth");
+
+    if (error) {
+      const errorMessages = {
+        authentication_failed: "Authentication failed. Please try again.",
+        server_error: "Server error occurred. Please try again later.",
+        google_auth_failed: "Google authentication failed. Please try again.",
+      };
+      toast.error(errorMessages[error] || "An error occurred");
+    }
+
+    if (auth === "success") {
+      toast.success("Logged in successfully!");
+      navigate("/", { replace: true });
+    }
+  }, [searchParams, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    login(formData);
+    await login(formData);
+    
   };
 
-  // Animation variants for staggered fade-in
+  
   const containerVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
@@ -35,7 +67,7 @@ const LoginPage = () => {
 
   return (
     <div className="h-screen grid lg:grid-cols-2">
-      {/* Left Side - Form */}
+      
       <motion.div
         className="flex flex-col justify-center items-center p-6 sm:p-12"
         initial={{ opacity: 0, x: -50 }}
@@ -48,7 +80,7 @@ const LoginPage = () => {
           initial="hidden"
           animate="visible"
         >
-          {/* Logo */}
+        
           <motion.div className="text-center mb-8" variants={itemVariants}>
             <div className="flex flex-col items-center gap-2 group">
               <motion.div
@@ -60,6 +92,21 @@ const LoginPage = () => {
               </motion.div>
               <h1 className="text-2xl font-bold mt-2">Welcome Back</h1>
               <p className="text-base-content/60">Sign in to your account</p>
+            </div>
+          </motion.div>
+
+         
+          <motion.div variants={itemVariants}>
+            <GoogleLoginButton text="Sign in with Google" />
+          </motion.div>
+
+          {/* Divider */}
+          <motion.div variants={itemVariants} className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-base-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-base-100 text-base-content/60">Or continue with email</span>
             </div>
           </motion.div>
 
@@ -159,4 +206,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-

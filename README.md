@@ -1,28 +1,34 @@
 # ✨ Full Stack Realtime Chat App ✨
 
 
-Highlights:
 
-- 🌟 Tech stack: MERN + Socket.io + TailwindCSS + Daisy UI
-- 🎃 Authentication && Authorization with JWT
-- 👾 Real-time messaging with Socket.io
-- 🚀 Online user status
-- 👌 Global state management with Zustand
-- 🐞 Error handling both on the server and on the client
-- ⏳ And much more!
 
 ### Setup .env file
 
 ```js
-MONGODB_URI=...
+
+
+MONGODB_URI=.....
+
+
 PORT=5001
-JWT_SECRET=...
-
-CLOUDINARY_CLOUD_NAME=...
-CLOUDINARY_API_KEY=...
-CLOUDINARY_API_SECRET=...
-
 NODE_ENV=development
+
+
+JWT_SECRET=.........
+
+
+CLOUDINARY_CLOUD_NAME=.....
+CLOUDINARY_API_KEY=.......
+CLOUDINARY_API_SECRET=......
+
+
+GOOGLE_CLIENT_ID=......
+GOOGLE_CLIENT_SECRET=......
+GOOGLE_CALLBACK_URL=http://localhost:5001/api/auth/google/callback
+
+
+FRONTEND_URL=http://localhost:5173
 ```
 
 ### Build the app

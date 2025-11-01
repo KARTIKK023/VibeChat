@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../store/useAuthStore";
 import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import AuthImagePattern from "../components/AuthImagePattern";
-import toast from "react-hot-toast";
+import GoogleLoginButton from "../components/GoogleLoginButton"; 
+import toast from "react-hot-toast"; 
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -23,7 +24,31 @@ const SignUpPage = () => {
     password: "",
   });
 
-  const { signup, isSigningUp } = useAuthStore();
+  const { signup, isSigningUp, authUser } = useAuthStore();
+  const navigate = useNavigate(); 
+  const [searchParams] = useSearchParams(); 
+
+  
+  useEffect(() => {
+    if (authUser) {
+      navigate("/", { replace: true });
+    }
+  }, [authUser, navigate]);
+
+  
+  useEffect(() => {
+    const auth = searchParams.get("auth");
+    const error = searchParams.get("error");
+
+    if (auth === "success") {
+      toast.success("Account created successfully!");
+      navigate("/", { replace: true });
+    }
+
+    if (error) {
+      toast.error("Authentication failed. Please try again.");
+    }
+  }, [searchParams, navigate]);
 
   const validateForm = () => {
     if (!formData.fullName.trim()) return toast.error("Full name is required");
@@ -34,10 +59,13 @@ const SignUpPage = () => {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const success = validateForm();
-    if (success === true) signup(formData);
+    if (success === true) {
+      await signup(formData);
+      
+    }
   };
 
   return (
@@ -65,13 +93,28 @@ const SignUpPage = () => {
             </div>
           </motion.div>
 
+          {/* Google Signup Button - NEW */}
+          <motion.div initial="hidden" animate="visible" variants={fadeInUp} custom={0.1}>
+            <GoogleLoginButton text="Sign up with Google" />
+          </motion.div>
+
+          {/* Divider - NEW */}
+          <motion.div initial="hidden" animate="visible" variants={fadeInUp} custom={0.2} className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-base-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-base-100 text-base-content/60">Or continue with email</span>
+            </div>
+          </motion.div>
+
           <motion.form
             onSubmit={handleSubmit}
             initial="hidden"
             animate="visible"
             className="space-y-6"
           >
-            <motion.div variants={fadeInUp} custom={0.1} className="form-control">
+            <motion.div variants={fadeInUp} custom={0.3} className="form-control">
               <label className="label">
                 <span className="label-text font-medium">Full Name</span>
               </label>
@@ -89,7 +132,7 @@ const SignUpPage = () => {
               </div>
             </motion.div>
 
-            <motion.div variants={fadeInUp} custom={0.2} className="form-control">
+            <motion.div variants={fadeInUp} custom={0.4} className="form-control">
               <label className="label">
                 <span className="label-text font-medium">Email</span>
               </label>
@@ -107,7 +150,7 @@ const SignUpPage = () => {
               </div>
             </motion.div>
 
-            <motion.div variants={fadeInUp} custom={0.3} className="form-control">
+            <motion.div variants={fadeInUp} custom={0.5} className="form-control">
               <label className="label">
                 <span className="label-text font-medium">Password</span>
               </label>
@@ -141,7 +184,7 @@ const SignUpPage = () => {
               className="btn btn-primary w-full"
               disabled={isSigningUp}
               variants={fadeInUp}
-              custom={0.4}
+              custom={0.6}
             >
               {isSigningUp ? (
                 <>
@@ -159,7 +202,7 @@ const SignUpPage = () => {
             initial="hidden"
             animate="visible"
             variants={fadeInUp}
-            custom={0.5}
+            custom={0.7}
           >
             <p className="text-base-content/60">
               Already have an account?{" "}
