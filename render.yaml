@@ -3,12 +3,18 @@ services:
     name: chat-app
     env: node
     plan: free
+
+  
     buildCommand: |
+      npm config set include=dev true
       npm run build
+
+
     startCommand: npm run start
+
     envVars:
       - key: NODE_ENV
         value: production
       - key: NODE_VERSION
         value: 20
-      
+
