@@ -4,20 +4,21 @@ services:
     env: node
     plan: free
 
-    # ✅ Force Render to use Node 20 (more stable for Vite)
-    nodeVersion: 20
-
-    # ✅ Install both backend and frontend deps including dev packages
-    buildCommand: |
-      npm ci --prefix backend
-      npm ci --prefix frontend --include=dev
-      npm run build --prefix frontend
-
-    # ✅ Start backend (serves both frontend & API)
-    startCommand: npm run start --prefix backend
-
+    # ✅ Force Node 20 (better compatibility for Vite)
     envVars:
+      - key: NODE_VERSION
+        value: 20
       - key: NODE_ENV
         value: production
+
+    # ✅ Build phase (override NODE_ENV to include devDependencies)
+    buildCommand: |
+      export NODE_ENV=development
+      npm install --prefix backend
+      npm install --prefix frontend
+      npm run build --prefix frontend
+
+    # ✅ Start phase (use backend which serves frontend)
+    startCommand: npm run start --prefix backend
 
      
