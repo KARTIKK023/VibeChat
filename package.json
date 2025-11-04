@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "echo 'Frontend prebuilt, skipping build step.'",
-    "start": "npm run start --prefix backend"
+    "start": "npm install --prefix backend && npm run start --prefix backend"
   },
   "keywords": [],
   "author": "",
