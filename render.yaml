@@ -4,17 +4,20 @@ services:
     env: node
     plan: free
 
-  
+    # ✅ Force Render to use Node 20 (Vite-friendly)
+    nodeVersion: 20
+
+    # ✅ Force installation of devDependencies (Vite, Tailwind, etc.)
     buildCommand: |
-      npm config set include=dev true
-      npm run build
+      npm ci --prefix backend
+      npm ci --prefix frontend --include=dev
+      npm run build --prefix frontend
 
-
-    startCommand: npm run start
+    # ✅ Start backend (which also serves frontend)
+    startCommand: npm run start --prefix backend
 
     envVars:
       - key: NODE_ENV
         value: production
-      - key: NODE_VERSION
-        value: 20
 
+     
