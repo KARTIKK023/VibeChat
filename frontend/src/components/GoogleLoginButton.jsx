@@ -5,7 +5,7 @@ const GoogleLoginButton = ({ text = "Continue with Google" }) => {
    
     const backendUrl = import.meta.env.MODE === "development" 
       ? "http://localhost:5001" 
-      : "https://vibechat-3-ptqi.onrender.com/api/auth/google";
+      : "https://vibechat-3-ptqi.onrender.com";
 
     window.location.href = `${backendUrl}/api/auth/google`;
   };
